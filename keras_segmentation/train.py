@@ -6,9 +6,11 @@ from .data_utils.data_loader import image_segmentation_generator, \
 import six
 from keras.callbacks import Callback
 from keras.callbacks import ModelCheckpoint
+from keras.callbacks import TensorBoard
 import tensorflow as tf
 import glob
 import sys
+import time 
 
 def find_latest_checkpoint(checkpoints_path, fail_safe=True):
 
@@ -88,6 +90,10 @@ def train(model,
                              # cv2.IMREAD_GRAYSCALE = 0,
                              # cv2.IMREAD_UNCHANGED = -1 (4 channels like RGBA)
          ):
+    
+    name = "3-class_segmentation-{}".format(int(time.time()))
+    tensorboard = TensorBoard(log_dir="/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs/{}".format(name))
+    
     from .models.all_models import model_from_name
     # check if user gives model name instead of the model object
     if isinstance(model, six.string_types):
@@ -198,11 +204,11 @@ def train(model,
 
     if not validate:
         model.fit(train_gen, steps_per_epoch=steps_per_epoch,
-                  epochs=epochs, callbacks=callbacks, initial_epoch=initial_epoch)
+                  epochs=epochs, callbacks=callbacks.append(tensorboard), initial_epoch=initial_epoch)
     else:
         model.fit(train_gen,
                   steps_per_epoch=steps_per_epoch,
                   validation_data=val_gen,
                   validation_steps=val_steps_per_epoch,
-                  epochs=epochs, callbacks=callbacks,
+                  epochs=epochs, callbacks=callbacks.append(tensorboard),
                   use_multiprocessing=gen_use_multiprocessing, initial_epoch=initial_epoch)
