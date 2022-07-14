@@ -95,7 +95,7 @@ def train(model,
 #     name = "3-class_segmentation-{}".format(int(time.time()))
 #     tensorboard = TensorBoard(log_dir="/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs/{}".format(name))
 
-    logdir = os.path.join("logs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+    logdir = os.path.join("/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
     tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
     
     from .models.all_models import model_from_name
