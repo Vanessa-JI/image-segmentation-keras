@@ -91,8 +91,11 @@ def train(model,
                              # cv2.IMREAD_UNCHANGED = -1 (4 channels like RGBA)
          ):
     
-    name = "3-class_segmentation-{}".format(int(time.time()))
-    tensorboard = TensorBoard(log_dir="/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs/{}".format(name))
+#     name = "3-class_segmentation-{}".format(int(time.time()))
+#     tensorboard = TensorBoard(log_dir="/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs/{}".format(name))
+
+    logdir = os.path.join("logs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
     
     from .models.all_models import model_from_name
     # check if user gives model name instead of the model object
@@ -204,11 +207,11 @@ def train(model,
 
     if not validate:
         model.fit(train_gen, steps_per_epoch=steps_per_epoch,
-                  epochs=epochs, callbacks=callbacks.append(tensorboard), initial_epoch=initial_epoch)
+                  epochs=epochs, callbacks=callbacks.append(tensorboard_callback), initial_epoch=initial_epoch)
     else:
         model.fit(train_gen,
                   steps_per_epoch=steps_per_epoch,
                   validation_data=val_gen,
                   validation_steps=val_steps_per_epoch,
-                  epochs=epochs, callbacks=callbacks.append(tensorboard),
+                  epochs=epochs, callbacks=callbacks.append(tensorboard_callback),
                   use_multiprocessing=gen_use_multiprocessing, initial_epoch=initial_epoch)
