@@ -1,7 +1,6 @@
 import json
 import os
 import datetime 
-from datetime import datetime 
 
 from .data_utils.data_loader import image_segmentation_generator, \
     verify_segmentation_dataset
