@@ -19,7 +19,7 @@ except ImportError:
         return iter
 
 
-from ..models.config import IMAGE_ORDERING
+# from ..models.config import IMAGE_ORDERING
 from .augmentation import augment_seg, custom_augment_seg
 
 DATA_LOADER_SEED = 0
@@ -414,7 +414,7 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
 
                 im, seg, others = next(zipped)
 
-                
+
 
                 im = cv2.imread(im, read_image_type)
                 seg = cv2.imread(seg, 1)
