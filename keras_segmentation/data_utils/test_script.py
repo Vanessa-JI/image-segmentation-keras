@@ -19,7 +19,7 @@ read_image_type = cv2.IMREAD_COLOR
 ignore_segs = False
 
 
-data_loader.image_segmentation_generator(images_path, segs_path, batch_size,
+test = data_loader.image_segmentation_generator(images_path, segs_path, batch_size,
                                         n_classes, input_height, input_width,
                                         output_height, output_width,
                                         do_augment=False,
@@ -27,3 +27,4 @@ data_loader.image_segmentation_generator(images_path, segs_path, batch_size,
                                         custom_augmentation=None,
                                         other_inputs_paths=None, preprocessing=None,
                                         read_image_type=cv2.IMREAD_COLOR , ignore_segs=False)
+

@@ -20,7 +20,7 @@ except ImportError:
 
 
 # from ..models.config import IMAGE_ORDERING
-from .augmentation import augment_seg, custom_augment_seg
+# from .augmentation import augment_seg, custom_augment_seg
 
 DATA_LOADER_SEED = 0
 
@@ -407,7 +407,7 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
                     im = preprocessing(im)
 
                 X.append(get_image_array(im, input_width,
-                                         input_height, ordering=IMAGE_ORDERING))
+                                         input_height, ordering="channels_last"))
             else:
 
                 assert ignore_segs == False , "Not supported yet"
@@ -437,7 +437,7 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
                 oth = []
                 for i, image in enumerate(ims):
                     oth_im = get_image_array(image, input_width,
-                                             input_height, ordering=IMAGE_ORDERING)
+                                             input_height, ordering="channels_last")
 
                     if preprocessing is not None:
                         if isinstance(preprocessing, Sequence):
@@ -454,6 +454,6 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
                     seg, n_classes, output_width, output_height))
 
         if ignore_segs:
-            yield np.array(X)
+            return np.array(X)
         else:
-            yield np.array(X), np.array(Y)
+            return np.array(X), np.array(Y)
