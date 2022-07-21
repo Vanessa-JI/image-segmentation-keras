@@ -172,10 +172,11 @@ def get_pairs_from_paths(images_path, segs_path, ignore_non_matching=False, othe
 
     for dir_entry in os.listdir(images_path):
         if os.path.isfile(os.path.join(images_path, dir_entry)) and \
-                os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS:
-            file_name, file_extension = os.path.splitext(dir_entry)
-            image_files.append((file_name, file_extension,
-                                os.path.join(images_path, dir_entry)))
+                os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS and \
+                    not dir_entry.startswith("."):
+                    file_name, file_extension = os.path.splitext(dir_entry)
+                    image_files.append((file_name, file_extension,
+                                    os.path.join(images_path, dir_entry)))
 
     if other_inputs_paths is not None:
         other_inputs_files = []
@@ -185,17 +186,18 @@ def get_pairs_from_paths(images_path, segs_path, ignore_non_matching=False, othe
 
             for y, dir_entry in enumerate(os.listdir(other_inputs_path)):
                 if os.path.isfile(os.path.join(other_inputs_path, dir_entry)) and \
-                        os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS:
-                    file_name, file_extension = os.path.splitext(dir_entry)
-
-                    temp.append((file_name, file_extension,
-                                 os.path.join(other_inputs_path, dir_entry)))
+                        os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS and \
+                            not dir_entry.startswith("."):
+                            file_name, file_extension = os.path.splitext(dir_entry)
+                            temp.append((file_name, file_extension,
+                                        os.path.join(other_inputs_path, dir_entry)))
 
             other_inputs_files.append(temp)
 
     for dir_entry in os.listdir(segs_path):
         if os.path.isfile(os.path.join(segs_path, dir_entry)) and \
-           os.path.splitext(dir_entry)[1] in ACCEPTABLE_SEGMENTATION_FORMATS:
+           os.path.splitext(dir_entry)[1] in ACCEPTABLE_SEGMENTATION_FORMATS and \
+            not dir_entry.startswith("."):
             file_name, file_extension = os.path.splitext(dir_entry)
             full_dir_entry = os.path.join(segs_path, dir_entry)
             if file_name in segmentation_files:

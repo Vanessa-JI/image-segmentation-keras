@@ -3,8 +3,8 @@ import data_loader
 import cv2 as cv2  
 
 images_path = "/Volumes/WD_Drive/MSc_Project/CATARACTS_SEGMENTATION/CaDISv2/Video01/Images"
-segs_path = "/Volumes/WD_Drive/MSc_Project/CATARACTS_SEGMENTATION/CaDISv2/Video01/Labels"
-other_inputs_path = "/Users/vanessaigodifo/MSc_Project/Optical_Flows/Video01"
+segs_path = "/Users/vanessaigodifo/MSc_Project/VGG-UNet/Training/Video01_Annotations"
+other_inputs_paths = ["/Users/vanessaigodifo/MSc_Project/Optical_Flows/Video01"]
 batch_size = 64
 n_classes = 3
 input_height = 540
@@ -25,6 +25,6 @@ test = data_loader.image_segmentation_generator(images_path, segs_path, batch_si
                                         do_augment=False,
                                         augmentation_name="aug_all",
                                         custom_augmentation=None,
-                                        other_inputs_paths=None, preprocessing=None,
+                                        other_inputs_paths=other_inputs_paths, preprocessing=None,
                                         read_image_type=cv2.IMREAD_COLOR , ignore_segs=False)
 
