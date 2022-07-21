@@ -216,9 +216,6 @@ def train(model,
                   steps_per_epoch=steps_per_epoch,
                   validation_data=val_gen,
                   validation_steps=val_steps_per_epoch,
-<<<<<<< HEAD
                   epochs=epochs, callbacks=callbacks.append(tensorboard),
-=======
                   epochs=epochs, callbacks=callbacks.append(tensorboard_callback),
->>>>>>> f3e69bf9f6844167c7c23b2c94b9ccf6be49607d
                   use_multiprocessing=gen_use_multiprocessing, initial_epoch=initial_epoch)
