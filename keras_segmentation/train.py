@@ -210,7 +210,7 @@ def train(model,
     if not validate:
         model.fit(train_gen, steps_per_epoch=steps_per_epoch,
                   epochs=epochs, callbacks=callbacks.append(tensorboard), initial_epoch=initial_epoch)
-                  epochs=epochs, callbacks=callbacks.append(tensorboard_callback), initial_epoch=initial_epoch)
+
     else:
         model.fit(train_gen,
                   steps_per_epoch=steps_per_epoch,
