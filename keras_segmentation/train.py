@@ -180,7 +180,7 @@ def train(model,
         input_height, input_width, output_height, output_width,
         do_augment=do_augment, augmentation_name=augmentation_name,
         custom_augmentation=custom_augmentation, 
-        other_inputs_paths=["/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Validation/Video01_Flows/"],
+        other_inputs_paths=["/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Training/Video01_Flows/"],
         preprocessing=preprocessing, read_image_type=read_image_type)
 
     if validate:
