@@ -188,14 +188,15 @@ def train(model,
         train_images, train_annotations,  batch_size,  n_classes,
         input_height, input_width, output_height, output_width,
         do_augment=do_augment, augmentation_name=augmentation_name,
-        custom_augmentation=custom_augmentation, other_inputs_paths=other_inputs_paths,
+        custom_augmentation=custom_augmentation, 
+        other_inputs_paths=["/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Validation/Video01_Flows/"],
         preprocessing=preprocessing, read_image_type=read_image_type)
 
     if validate:
         val_gen = image_segmentation_generator(
             val_images, val_annotations,  val_batch_size,
             n_classes, input_height, input_width, output_height, output_width,
-            other_inputs_paths=other_inputs_paths,
+            other_inputs_paths=["/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Validation/Video05_Flows/"],
             preprocessing=preprocessing, read_image_type=read_image_type)
 
     if callbacks is None and (not checkpoints_path is  None) :
