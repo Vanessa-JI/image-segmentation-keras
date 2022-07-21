@@ -5,13 +5,7 @@ import datetime
 from .data_utils.data_loader import image_segmentation_generator, \
     verify_segmentation_dataset
 import six
-<<<<<<< HEAD
 from keras.callbacks import Callback, ModelCheckpoint, TensorBoard
-=======
-from keras.callbacks import Callback
-from keras.callbacks import ModelCheckpoint
-from keras.callbacks import TensorBoard
->>>>>>> f3e69bf9f6844167c7c23b2c94b9ccf6be49607d
 import tensorflow as tf
 import glob
 import sys
@@ -96,17 +90,14 @@ def train(model,
                              # cv2.IMREAD_UNCHANGED = -1 (4 channels like RGBA)
          ):
     
-<<<<<<< HEAD
     name = "3-class_segmentation-{}".format(int(time.time()))
     tensorboard = TensorBoard(log_dir="/Users/vanessaigodifo/MSc_Project/VGG-UNet/Logs/{}".format(name))
-=======
 #     name = "3-class_segmentation-{}".format(int(time.time()))
 #     tensorboard = TensorBoard(log_dir="/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs/{}".format(name))
 
     logdir = os.path.join("/content/gdrive/MyDrive/MSc_Project/VGG_UNet/Logs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
     tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
     
->>>>>>> f3e69bf9f6844167c7c23b2c94b9ccf6be49607d
     from .models.all_models import model_from_name
     # check if user gives model name instead of the model object
     if isinstance(model, six.string_types):
@@ -218,11 +209,8 @@ def train(model,
 
     if not validate:
         model.fit(train_gen, steps_per_epoch=steps_per_epoch,
-<<<<<<< HEAD
                   epochs=epochs, callbacks=callbacks.append(tensorboard), initial_epoch=initial_epoch)
-=======
                   epochs=epochs, callbacks=callbacks.append(tensorboard_callback), initial_epoch=initial_epoch)
->>>>>>> f3e69bf9f6844167c7c23b2c94b9ccf6be49607d
     else:
         model.fit(train_gen,
                   steps_per_epoch=steps_per_epoch,
