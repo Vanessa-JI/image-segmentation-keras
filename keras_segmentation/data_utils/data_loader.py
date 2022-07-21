@@ -414,6 +414,7 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
 
                 assert ignore_segs == False , "Not supported yet"
 
+                # getting a specific image, segmentation, and optical flow file 
                 im, seg, others = next(zipped)
 
 
@@ -421,35 +422,52 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
                 im = cv2.imread(im, read_image_type)
                 seg = cv2.imread(seg, 1)
 
-                oth = []
-                for f in others:
-                    oth.append(cv2.imread(f, read_image_type))
 
-                if do_augment:
-                    if custom_augmentation is None:
-                        ims, seg[:, :, 0] = augment_seg(im, seg[:, :, 0],
-                                                        augmentation_name, other_imgs=oth)
-                    else:
-                        ims, seg[:, :, 0] = custom_augment_seg(im, seg[:, :, 0],
-                                                               custom_augmentation, other_imgs=oth)
-                else:
-                    ims = [im]
-                    ims.extend(oth)
 
-                oth = []
-                for i, image in enumerate(ims):
-                    oth_im = get_image_array(image, input_width,
-                                             input_height, ordering="channels_last")
 
-                    if preprocessing is not None:
-                        if isinstance(preprocessing, Sequence):
-                            oth_im = preprocessing[i](oth_im)
-                        else:
-                            oth_im = preprocessing(oth_im)
+                # my edit to append the optical flow onto the image 
+                flo = cv2.imread(others[0])
+                flo_small = cv2.resize(flo, (0, 0), fx=0.5, fy=0.5)
+                
+                # concatenate the optical flow onto the image
+                im_flo = np.dstack((im, flo_small))
 
-                    oth.append(oth_im)
+                print(im_flo.shape)
 
-                X.append(oth)
+
+
+
+
+                # oth = []
+                # for f in others:
+                #     oth.append(cv2.imread(f, read_image_type))
+
+                # if do_augment:
+                #     if custom_augmentation is None:
+                #         ims, seg[:, :, 0] = augment_seg(im, seg[:, :, 0],
+                #                                         augmentation_name, other_imgs=oth)
+                #     else:
+                #         ims, seg[:, :, 0] = custom_augment_seg(im, seg[:, :, 0],
+                #                                                custom_augmentation, other_imgs=oth)
+                # else:
+                #     ims = [im]
+                #     ims.extend(oth)
+
+                # oth = []
+                # for i, image in enumerate(ims):
+                #     oth_im = get_image_array(image, input_width,
+                #                              input_height, ordering="channels_last")
+
+                #     if preprocessing is not None:
+                #         if isinstance(preprocessing, Sequence):
+                #             oth_im = preprocessing[i](oth_im)
+                #         else:
+                #             oth_im = preprocessing(oth_im)
+
+                #     oth.append(oth_im)
+
+
+                X.append(im_flo)
 
             if not ignore_segs:
                 Y.append(get_segmentation_array(
