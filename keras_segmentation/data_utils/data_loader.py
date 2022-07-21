@@ -31,6 +31,7 @@ class_colors = [(random.randint(0, 255), random.randint(
 
 ACCEPTABLE_IMAGE_FORMATS = [".jpg", ".jpeg", ".png", ".bmp"]
 ACCEPTABLE_SEGMENTATION_FORMATS = [".png", ".bmp"]
+ACCEPTABLE_FLOW_FORMATS = [".jpg", ".jpeg", ".png"]
 
 
 class DataLoaderError(Exception):
@@ -46,6 +47,117 @@ def get_image_list_from_path(images_path ):
                 file_name, file_extension = os.path.splitext(dir_entry)
                 image_files.append(os.path.join(images_path, dir_entry))
     return image_files
+
+
+
+
+
+
+
+
+# other_inputs_paths is the path to the flow files 
+def get_trios_from_paths(images_path, segs_path, ignore_non_matching=False, other_inputs_paths=None):
+
+    image_files = []
+    segmentation_files = {}
+    flow_files = {}
+
+    # for every file and directory in the images path:
+    for dir_entry in os.listdir(images_path):
+
+        # check that we're looking at a file and that it's in an acceptable format 
+        if os.path.isfile(os.path.join(images_path, dir_entry)) and \
+            os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS:
+
+            # if file and in acceptable format, get the file name and extension 
+            file_name, file_extension = os.path.splitext(dir_entry)
+
+            # add a tuple containing the file name, extension and the path to the file to the images_file array 
+            image_files.append((file_name, file_extension, os.path.join(images_path, dir_entry)))
+
+    
+    # not sure what other_inputs_paths is but it could be used for optical flow files??
+    if other_inputs_paths is not None:
+        other_inputs_files = []
+
+        for i, other_inputs_path in enumerate(other_inputs_paths):
+            temp = []
+
+            for y, dir_entry in enumerate(os.listdir(other_inputs_path)):
+                if os.path.isfile(os.path.join(other_inputs_path, dir_entry)) and \
+                        os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS:
+                    file_name, file_extension = os.path.splitext(dir_entry)
+
+                    temp.append((file_name, file_extension,
+                                 os.path.join(other_inputs_path, dir_entry)))
+
+            other_inputs_files.append(temp)
+
+    # look through the directory for the segmentation files 
+    for dir_entry in os.listdir(segs_path):
+
+        # if we're looking at a file and it's in an acceptable format,
+        if os.path.isfile(os.path.join(segs_path, dir_entry)) and \
+            os.path.splitext(dir_entry)[1] in ACCEPTABLE_IMAGE_FORMATS:
+
+            # get the file name and file extension 
+            file_name, file_extension = os.path.splitext(dir_entry)
+
+            # get the full path to the file
+            full_dir_entry = os.path.join(segs_path, dir_entry)
+
+            # if the segmentation file has already been created (we have two of the same named files), raise error 
+            if file_name in segmentation_files:
+                raise DataLoaderError("Segmentation file with filename {0}"
+                                      " already exists and is ambiguous to"
+                                      " resolve with path {1}."
+                                      " Please remove or rename the latter."
+                                      .format(file_name, full_dir_entry))
+            
+            # if the segmentation file doesn't exist, add it to the dictionary 
+            # in the dictionary, the key is the file name (matches the RGB and flow file)
+            # the value is the segmentation file's extension [0] and the full path to the file [1]
+            segmentation_files[file_name] = (file_extension, full_dir_entry)
+
+    
+    return_value = []
+    # Match the images, flows, and segmentations 
+    for image_file, _, image_full_path in image_files:
+
+        # for each image file, if there is a corresponding segmentation file,
+        if image_file in segmentation_files:
+            if other_inputs_paths is not None:
+                other_inputs = []
+                for file_paths in other_inputs_files:
+                    success = False
+
+                    for (other_file, _, other_full_path) in file_paths:
+                        if image_file == other_file:
+                            other_inputs.append(other_full_path)
+                            success = True
+                            break
+
+                    if not success:
+                        raise ValueError("There was no matching other input to", image_file, "in directory")
+
+                return_value.append((image_full_path,
+                                     segmentation_files[image_file][1], other_inputs))
+            else:
+                return_value.append((image_full_path,
+                                     segmentation_files[image_file][1]))
+        elif ignore_non_matching:
+            continue
+        else:
+            # Error out
+            raise DataLoaderError("No corresponding segmentation "
+                                  "found for image {0}."
+                                  .format(image_full_path))
+
+    # return value contains the full paths to the segmentation files, rgb files, and flow files 
+    return return_value
+
+
+
 
 
 def get_pairs_from_paths(images_path, segs_path, ignore_non_matching=False, other_inputs_paths=None):
@@ -256,6 +368,8 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
         img_seg_pairs = get_pairs_from_paths(images_path, segs_path, other_inputs_paths=other_inputs_paths)
         random.shuffle(img_seg_pairs)
         zipped = itertools.cycle(img_seg_pairs)
+
+    # for unsupervised training
     else:
         img_list = get_image_list_from_path( images_path )
         random.shuffle( img_list )
@@ -299,6 +413,8 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
                 assert ignore_segs == False , "Not supported yet"
 
                 im, seg, others = next(zipped)
+
+                
 
                 im = cv2.imread(im, read_image_type)
                 seg = cv2.imread(seg, 1)
