@@ -432,7 +432,7 @@ def image_segmentation_generator(images_path, segs_path, batch_size,
                 # concatenate the optical flow onto the image
                 im_flo = np.dstack((im, flo_small))
 
-                print(im_flo.shape)
+                # print(im_flo.shape)
 
 
 
