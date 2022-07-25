@@ -207,7 +207,8 @@ def train(model,
     if callbacks is None:
         callbacks = []
 
-    if not validate:
+    if not validate: 
+        print(train_gen)
         model.fit(train_gen, steps_per_epoch=steps_per_epoch,
                   epochs=epochs, callbacks=callbacks.append(tensorboard), initial_epoch=initial_epoch)
 
